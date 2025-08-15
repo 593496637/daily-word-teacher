@@ -1,12 +1,12 @@
 # 🎯 每日单词老师 Agent
 
-> 基于 Mastra + OpenAI + 外部API 的智能英语单词教学助手
+> 基于 Mastra + OpenAI + React 的智能英语单词教学助手
 
 一个现代化的 AI 驱动英语学习应用，支持多种教学风格和个性化学习体验。通过集成词典 API 和 OpenAI GPT-4，为每个单词生成生动有趣的教学内容。
 
+![技术栈](https://img.shields.io/badge/Mastra-Latest-FF6B6B?style=flat-square)
 ![技术栈](https://img.shields.io/badge/React-18+-61DAFB?style=flat-square&logo=react)
 ![技术栈](https://img.shields.io/badge/TypeScript-5+-3178C6?style=flat-square&logo=typescript)
-![技术栈](https://img.shields.io/badge/Mastra-Latest-FF6B6B?style=flat-square)
 ![技术栈](https://img.shields.io/badge/OpenAI-GPT--4-412991?style=flat-square&logo=openai)
 ![部署](https://img.shields.io/badge/Cloudflare-Workers-F38020?style=flat-square&logo=cloudflare)
 
@@ -24,22 +24,22 @@
 ## 🏗️ 技术架构
 
 ```
-用户输入 → React前端 → Mastra HTTP API → Mastra Agent → 
-Dictionary API + OpenAI → 生动教学内容 → 用户
+React前端 → Mastra Client SDK → Mastra Agent → Dictionary API + OpenAI → 教学内容
 ```
 
 ### 核心技术栈
 
-**前端**:
-- React 18 + TypeScript
-- Vite (构建工具)
-- 现代 CSS (玻璃拟态效果)
-
 **后端**:
-- Mastra (AI Agent 框架)
+- Mastra AI Agent 框架
 - OpenAI GPT-4 API
 - Free Dictionary API
 - TypeScript
+
+**前端**:
+- React 18 + TypeScript
+- Mastra Client SDK
+- Vite (构建工具)
+- 现代 CSS (玻璃拟态效果)
 
 **部署**:
 - Cloudflare Workers (后端)
@@ -47,45 +47,53 @@ Dictionary API + OpenAI → 生动教学内容 → 用户
 
 ## 🚀 快速开始
 
-### 前置要求
-
-- Node.js 18+
-- OpenAI API Key
-- Git
-
-### 一键启动
+### 方式一：一键重构（推荐）
 
 ```bash
-# 克隆项目
+# 1. 克隆项目
 git clone https://github.com/593496637/daily-word-teacher.git
 cd daily-word-teacher
 
-# 快速启动 (自动安装依赖和配置)
-bash start.sh
-```
+# 2. 运行重构脚本
+chmod +x refactor-to-mastra.sh
+./refactor-to-mastra.sh
 
-### 手动安装
-
-```bash
-# 1. 安装后端依赖
-npm install
-
-# 2. 安装前端依赖  
-cd frontend && npm install && cd ..
-
-# 3. 配置环境变量
-cp .env.example .env
-# 编辑 .env 文件，填入 OpenAI API Key
+# 3. 配置OpenAI API Key
+nano mastra-backend/.env
+# 填入: OPENAI_API_KEY=your_openai_api_key_here
 
 # 4. 启动开发服务器
+npm run dev:all
+```
+
+### 方式二：手动设置
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/593496637/daily-word-teacher.git
+cd daily-word-teacher
+
+# 2. 创建Mastra后端
+npm create mastra@latest mastra-backend
+cd mastra-backend && npm install openai && cd ..
+
+# 3. 安装依赖
+npm install
+cd frontend && npm install && cd ..
+
+# 4. 配置环境变量
+cp mastra-backend/.env.example mastra-backend/.env
+# 编辑.env文件填入API密钥
+
+# 5. 启动服务
 npm run dev:all
 ```
 
 ### 访问地址
 
 - 🎨 **前端应用**: http://localhost:3000
-- 🔌 **后端 API**: http://localhost:4111  
-- 📖 **API 文档**: http://localhost:4111/swagger-ui
+- 🔌 **Mastra后端**: http://localhost:4111  
+- 📖 **API 文档**: http://localhost:4111/docs
 
 ## 🎮 使用方法
 
@@ -105,66 +113,49 @@ npm run dev:all
 | 🎓 严谨式 | 专业权威的解释 | 学术研究者 |
 | 🔬 学术式 | 深度学术分析 | 高级学习者 |
 
-## 🔧 API 接口
-
-### 核心接口
-
-**POST /api/word-teacher**
-
-```typescript
-// 请求
-{
-  "word": "serendipity",
-  "style": "humorous",
-  "level": "intermediate"
-}
-
-// 响应
-{
-  "word": "serendipity",
-  "style": "humorous",
-  "enhancedContent": {
-    "introduction": "AI生成的单词介绍",
-    "pronunciation": {
-      "guide": "发音指导",
-      "tips": "发音技巧"
-    },
-    "meanings": [...],
-    "usage": {...},
-    "funFacts": [...],
-    "summary": "学习总结"
-  },
-  "success": true,
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
-```
-
-详细 API 文档请访问: http://localhost:4111/swagger-ui
-
 ## 📦 项目结构
 
 ```
 daily-word-teacher/
-├── src/
-│   ├── agents/             # Mastra Agent 核心逻辑
-│   │   └── wordTeacherAgent.ts
-│   ├── services/           # 外部服务集成
-│   │   ├── dictionaryService.ts  # 词典API
-│   │   └── openaiService.ts      # OpenAI API
-│   └── types/              # TypeScript 类型定义
-│       └── word.ts
-├── frontend/               # React 前端
+├── mastra-backend/             # Mastra AI后端
 │   ├── src/
-│   │   ├── components/     # React 组件
-│   │   │   ├── WordInput.tsx   # 单词输入组件
-│   │   │   └── WordDisplay.tsx # 单词展示组件
-│   │   ├── services/       # API 服务
-│   │   │   └── api.ts
-│   │   ├── App.tsx        # 主应用
-│   │   └── App.css        # 样式文件
-│   └── vite.config.ts     # Vite 配置
-├── mastra.config.ts       # Mastra 配置
-└── package.json
+│   │   ├── agents/            # AI Agents
+│   │   ├── tools/             # 工具集成
+│   │   ├── workflows/         # 工作流
+│   │   └── types/             # 类型定义
+│   ├── mastra.config.ts       # Mastra配置
+│   └── package.json
+├── frontend/                  # React前端
+│   ├── src/
+│   │   ├── components/        # React组件
+│   │   ├── services/          # API服务
+│   │   └── App.tsx           # 主应用
+│   └── package.json
+├── PROJECT_TASKS.md           # 项目任务指南
+├── refactor-to-mastra.sh      # 快速重构脚本
+└── README.md
+```
+
+## 🛠️ 开发脚本
+
+```bash
+# 开发
+npm run dev              # 启动Mastra后端
+npm run frontend:dev     # 启动React前端  
+npm run dev:all          # 同时启动前后端
+
+# 构建
+npm run build            # 构建Mastra后端
+npm run frontend:build   # 构建React前端
+npm run build:all        # 构建整个项目
+
+# 部署
+npm run deploy           # 部署Mastra到Cloudflare Workers
+
+# 工具
+npm run setup            # 安装所有依赖
+npm run clean            # 清理node_modules
+npm run type-check       # TypeScript类型检查
 ```
 
 ## 🚀 部署指南
@@ -172,13 +163,15 @@ daily-word-teacher/
 ### 部署到 Cloudflare Workers
 
 ```bash
-# 1. 构建后端
-npm run build
+# 1. 配置Cloudflare凭据
+export CLOUDFLARE_API_TOKEN=your_api_token
+export CLOUDFLARE_ACCOUNT_ID=your_account_id
 
-# 2. 部署到 Cloudflare Workers
+# 2. 部署后端
+cd mastra-backend
 npm run deploy
 
-# 3. 配置环境变量
+# 3. 配置生产环境变量
 wrangler secret put OPENAI_API_KEY
 ```
 
@@ -189,13 +182,80 @@ wrangler secret put OPENAI_API_KEY
 cd frontend
 npm run build
 
-# 2. 部署到 Cloudflare Pages
-# 或其他静态托管服务 (Vercel, Netlify)
+# 2. 部署到Cloudflare Pages
+# 上传dist目录到Cloudflare Pages
+# 或使用其他静态托管服务
 ```
+
+## 🔧 环境变量配置
+
+### Mastra后端 (.env)
+```bash
+# 必需
+OPENAI_API_KEY=your_openai_api_key_here
+
+# 部署相关（可选）
+CLOUDFLARE_ACCOUNT_ID=your_account_id
+CLOUDFLARE_API_TOKEN=your_api_token
+
+# 开发配置
+NODE_ENV=development
+PORT=4111
+```
+
+### 前端 (.env)
+```bash
+# API基础URL
+VITE_API_BASE_URL=http://localhost:4111
+
+# 应用配置
+VITE_APP_TITLE=每日单词老师
+```
+
+## 📋 开发任务
+
+当前实现状态和后续计划请查看 [PROJECT_TASKS.md](./PROJECT_TASKS.md)
+
+### 立即可用功能 ✅
+- [x] 单词查询和AI内容生成
+- [x] 5种教学风格支持
+- [x] 响应式现代UI
+- [x] 错误处理和加载状态
+- [x] 语音发音功能
+
+### 计划中功能 📋
+- [ ] 用户系统和收藏功能
+- [ ] 学习历史和进度追踪
+- [ ] 社交分享和讨论
+- [ ] MCP协议集成
+- [ ] 移动应用开发
+
+## 🔍 故障排除
+
+### 常见问题
+
+**Q: OpenAI API 调用失败**
+- 检查 API Key 是否正确设置在 `mastra-backend/.env`
+- 确认账户余额充足
+- 检查网络连接
+
+**Q: 前端无法连接后端**
+- 确认Mastra后端正在运行 (http://localhost:4111)
+- 检查代理配置和CORS设置
+
+**Q: 部署失败**
+- 确认Cloudflare凭据正确
+- 检查环境变量是否正确设置
+
+### 获取帮助
+
+- 📖 查看 [PROJECT_TASKS.md](./PROJECT_TASKS.md) 详细指南
+- 🐛 提交 [Issue](../../issues)
+- 💬 参与 [讨论](../../discussions)
 
 ## 🤝 贡献指南
 
-我们欢迎所有形式的贡献！
+欢迎贡献代码！请遵循以下流程：
 
 1. Fork 项目
 2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
@@ -217,3 +277,5 @@ npm run build
 ---
 
 ⭐ 如果这个项目对你有帮助，请给我们一个 Star！
+
+📧 联系我们: [593496637@qq.com](mailto:593496637@qq.com)
